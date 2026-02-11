@@ -1,5 +1,5 @@
 {
-	"name": "bun-hono-drizzle-betterauth",
+	"name": "bun-todo",
 	"scripts": {
 		"dev": "bun run --hot src/index.ts",
 		"lint": "biome lint --write",
