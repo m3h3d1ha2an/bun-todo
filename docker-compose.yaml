@@ -1,16 +1,15 @@
 services:
   postgres:
-    image: postgres:alpine
+    image: postgres:18-alpine
     restart: unless-stopped
-    container_name: db-bhdb  # Short for Bun-Hono-Drizzle-BetterAuth
-    ports:
-      - '5432:5432'
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: todoDB
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   postgres_data:
