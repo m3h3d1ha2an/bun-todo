@@ -3,9 +3,9 @@ services:
     image: postgres:18-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: "buntodo"
+      POSTGRES_PASSWORD: "2d3ffdcc42c453f58dad35fa4099dac9"
+      POSTGRES_DB: "buntodoDB"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

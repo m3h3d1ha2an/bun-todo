@@ -14,6 +14,7 @@ generate_random_name() {
 }
 
 # ---------- Extract project name ----------
+PROJECT_NAME=""
 if [ -f package.json ]; then
   if command -v jq >/dev/null 2>&1; then
     PROJECT_NAME=$(jq -r '.name // empty' package.json)
@@ -59,18 +60,16 @@ else
 fi
 
 # ---------- Create docker-compose.yaml ----------
-if [ -f docker-compose.yaml ]; then
-  echo "docker-compose.yaml already exists. Skipping."
-else
+if [ ! -f docker-compose.yaml ]; then
   cat <<EOF > docker-compose.yaml
 services:
   postgres:
     image: postgres:18-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: \${DB_USER}
-      POSTGRES_PASSWORD: \${DB_PASS}
-      POSTGRES_DB: \${DB_NAME}
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASS}"
+      POSTGRES_DB: "${DB_NAME}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -80,27 +79,25 @@ volumes:
   postgres_data:
 EOF
   echo "docker-compose.yaml created."
+else
+  echo "docker-compose.yaml already exists. Skipping."
 fi
 
-# ---------- Create or append .env ----------
-touch .env  # ensure file exists
+# ---------- Create or update .env with host DATABASE_URL ----------
+touch .env
 
-append_if_missing() {
-  VAR_NAME=$1
-  VAR_VALUE=$2
-  # check if variable already exists in .env
-  if ! grep -qE "^${VAR_NAME}=" .env; then
-    echo "${VAR_NAME}=\"${VAR_VALUE}\"" >> .env
-    echo "Added ${VAR_NAME} to .env"
-  else
-    echo "${VAR_NAME} already exists in .env, skipping"
-  fi
-}
+# Host URL for apps running on the host machine
+DATABASE_URL="postgres://${DB_USER}:${DB_PASS}@localhost:5432/${DB_NAME}"
 
-append_if_missing "DB_USER" "$DB_USER"
-append_if_missing "DB_PASS" "$DB_PASS"
-append_if_missing "DB_NAME" "$DB_NAME"
+# Only append if DATABASE_URL is not already present
+if ! grep -qE "^DATABASE_URL=" .env; then
+  echo "DATABASE_URL=\"$DATABASE_URL\"" >> .env
+  echo "Added DATABASE_URL to .env"
+else
+  echo "DATABASE_URL already exists in .env, skipping"
+fi
 
 echo ""
 echo "Setup complete."
-echo ""
+echo "Host DATABASE_URL: ${DATABASE_URL}"
+echo "Run: docker compose up -d"

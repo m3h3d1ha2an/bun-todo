@@ -3,11 +3,18 @@ import { z } from "zod";
 const envSchema = z.object({
 	DATABASE_URL: z.url(),
 	BETTER_AUTH_SECRET: z.string(),
-	BETTER_AUTH_BASE_URL: z.url().default("http://localhost:3000"),
-	PORT: z.coerce.number().default(3000),
-	NODE_ENV: z
-		.enum(["development", "production", "test"])
-		.default("development"),
+	BETTER_AUTH_BASE_URL: z.url(),
+	PORT: z.coerce.number(),
+	NODE_ENV: z.enum(["development", "production", "test"]),
+	LOG_LEVEL: z.enum([
+		"fatal",
+		"error",
+		"warn",
+		"info",
+		"debug",
+		"trace",
+		"silent",
+	]),
 });
 
 const validateEnv = () => {
