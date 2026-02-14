@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { createApp } from "@/utils/create-app";
 import { OpenAPIConfig } from "@/utils/openapi-config";
 

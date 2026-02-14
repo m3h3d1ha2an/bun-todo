@@ -30,8 +30,8 @@ router.openapi(
 
 router.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw));
 
-const moduleRoutes = [{}]
+const moduleRoutes = [{}];
 
 moduleRoutes.forEach((route) => {
-  router.route(route.path, route.router);
+	router.route(route.path, route.router);
 });
