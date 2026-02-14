@@ -1,24 +1,10 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { requestId } from "hono/request-id";
-import type { PinoLogger } from "hono-pino";
 import { auth } from "@/auth";
-import { pinoLogger } from "@/middlewares/logger";
-import { notFound } from "@/middlewares/not-found";
-import { onError } from "@/middlewares/on-error";
-import { favicon } from "./middlewares/favicon";
+import { createApp } from "@/utils/create-app";
+import { OpenAPIConfig } from "@/utils/openapi-config";
 
-type AppBindings = {
-	Variables: {
-		logger: PinoLogger;
-	};
-};
-const app = new OpenAPIHono<AppBindings>();
+const app = createApp();
 
-app.use("*", requestId());
-app.use("*", favicon("📓"));
-app.use("*", pinoLogger());
-
-app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
+OpenAPIConfig(app);
 
 app.get("/", (c) => {
 	return c.json({
@@ -30,8 +16,5 @@ app.get("/", (c) => {
 app.get("/error", () => {
 	throw new Error("This is a test error");
 });
-
-app.notFound(notFound);
-app.onError(onError);
 
 export default app;
