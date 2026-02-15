@@ -1,33 +1,33 @@
 import type { Context } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+import { env } from "@/env";
+import { httpStatus } from "./http-status";
 
-type ApiResponse<T> = {
+export type ApiResponse<T> = {
 	success: boolean;
 	message: string;
 	data?: T | null;
 	stack?: string;
 };
 
-type SendResponseArgs<T> = {
-	c: Context;
-	statusCode: ContentfulStatusCode;
-} & ApiResponse<T>;
+type ResponseOptions<T> = {
+	statusCode?: ContentfulStatusCode;
+	message: string;
+} & Partial<ApiResponse<T>>;
 
-export const sendResponse = <T>({
-	c,
-	statusCode,
-	success,
-	message,
-	data,
-	stack,
-}: SendResponseArgs<T>) => {
-	return c.json(
-		{
-			success,
-			message,
-			data: data ?? null,
-			stack,
-		} satisfies ApiResponse<T>,
-		statusCode,
-	);
+
+export const sendResponse = <T>(
+	context: Context,
+	options: ResponseOptions<T>,
+) => {
+	const { statusCode, stack, data, success, message } = options;
+
+	const payload: ApiResponse<T> = {
+		success: success ?? true,
+		message,
+		data: data ?? null,
+		...(env.NODE_ENV !== "production" && stack && { stack }),
+	};
+
+	return context.json(payload, statusCode ?? httpStatus.OK);
 };
