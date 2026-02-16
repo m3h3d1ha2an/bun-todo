@@ -15,7 +15,6 @@ type ResponseOptions<T> = {
 	message: string;
 } & Partial<ApiResponse<T>>;
 
-
 export const sendResponse = <T>(
 	context: Context,
 	options: ResponseOptions<T>,

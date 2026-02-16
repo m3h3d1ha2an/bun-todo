@@ -1,11 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
-import type { PinoLogger } from "hono-pino";
-import type { AuthSession, AuthUser } from "./auth";
+import type { PinoLogger as HonoPinoLogger } from "hono-pino";
+import type { BetterAuth } from "@/auth";
 
 export type AppVariables = {
-	logger: PinoLogger;
-	user: AuthUser | null;
-	session: AuthSession | null;
+	logger: HonoPinoLogger;
+	user: BetterAuth["user"] | null;
+	session: BetterAuth["session"] | null;
 };
 
 export type AppBindings = {

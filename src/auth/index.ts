@@ -14,3 +14,5 @@ export const auth = betterAuth({
 		haveIBeenPwned(), // Block passwords found in data breaches
 	],
 });
+
+export type BetterAuth = typeof auth.$Infer.Session;
